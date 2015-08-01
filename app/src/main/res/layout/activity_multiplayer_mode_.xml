@@ -17,27 +17,13 @@
         android:layout_marginTop="184dp"
         android:id="@+id/linearLayout2">
 
-        <RadioGroup
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/rGroup">
-
-            <RadioButton
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:text="WiFi"
-                android:id="@+id/rBtnWifi"
-                android:textSize="25dp"
-                android:checked="true" />
-
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bluetooth"
-                android:id="@+id/rBtnBluetooth"
-                android:textSize="25dp"
-                android:checked="false" />
-        </RadioGroup>
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bluetooth"
+            android:id="@+id/rBtnBluetooth"
+            android:textSize="25dp"
+            android:checked="true" />
     </LinearLayout>
     <Button
         android:layout_width="wrap_content"
