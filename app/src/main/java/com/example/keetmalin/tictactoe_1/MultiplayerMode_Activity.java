@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,22 +72,14 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
 
         //getPairedDevices();
         activateBluetooth();
-        bluetoothDevices.add("keet");
+        //bluetoothDevices.add("keet");
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bluetoothDevices);
         listView.setAdapter(listAdapter);
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
 
-
-
-
-
-
-
-
-
-        //init();
+       //init();
 
         //activateBluetooth();
 
@@ -101,6 +94,10 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                startDiscovery();
+                Intent temp = getIntent();
+                Context temp2 = getBaseContext();
+                mReceiver.onReceive(temp2,temp );
 
             }
         });
@@ -126,12 +123,16 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
                 // Get the BluetoothDevice object from the Intent
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
-                bluetoothDevices.add(device.getName() + "\n" + device.getAddress());
+                if (!bluetoothDevices.contains(device.getName())){
+                    bluetoothDevices.add(device.getName());
+                    listView.setAdapter(listAdapter);
+                }
+
+                //listAdapter.notifyDataSetChanged();
             }
         }
     };
-    // Register the BroadcastReceiver
-    // Don't forget to unregister during onDestroy
+
 
     private void activateBluetooth() {
         if (mBluetoothAdapter == null) {
@@ -169,7 +170,12 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
         if (resultCode == RESULT_CANCELED) {
             Toast.makeText(getApplicationContext(), "Couldn't connect bluetooth in device",Toast.LENGTH_LONG).show();
         } else if (resultCode==RESULT_OK){
-
+            activateBluetooth();
+            /*getPairedDevices();
+            startDiscovery();
+            Intent temp = getIntent();
+            Context temp2 = getBaseContext();
+            mReceiver.onReceive(temp2,temp );*/
             /*Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
             List<String> s = new ArrayList<String>();
             for(BluetoothDevice bt : pairedDevices)
