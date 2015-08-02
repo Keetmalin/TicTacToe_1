@@ -1,24 +1,36 @@
 package com.example.keetmalin.tictactoe_1;
 
+import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.example.keetmalin.tictactoe_1.MultiplayerMode_Activity.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 
 public class GameArea_Activity extends ActionBarActivity {
     Game game;
-    Button btnBack;
+    Button btnBack,btnRestart;
     private Button buttons[];
+    ConnectedThread connectedThread;//= new ConnectedThread(MultiplayerMode_Activity.mmSocket);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_area_);
+
 
         buttons = new Button[10];//to make the coding easy array has 10 members
         buttons[1] = (Button) findViewById(R.id.one);
@@ -41,10 +53,17 @@ public class GameArea_Activity extends ActionBarActivity {
                 break;
             case 3 : playHardGame();
                 break;
-            case 4 : playMultiplayerGame();
+            case 4 : playTwoPlayerGame();
+                break;
+            case 5 :
+                btnRestart.setVisibility(View.GONE);
+                connectedThread= new ConnectedThread(MultiplayerMode_Activity.mmSocket);
+                playMultiplayerGame();
                 break;
         }
         btnBack= (Button) findViewById(R.id.btnBack);
+        btnRestart= (Button) findViewById(R.id.btnRestart);
+
 
         Typeface font = Typeface.createFromAsset(getAssets() , "BAUHS93.TTF");
         btnBack.setTypeface(font);
@@ -52,11 +71,24 @@ public class GameArea_Activity extends ActionBarActivity {
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                byte[] bytes={1,0,1,1,1,1,1,0};
+                //finish();
+                connectedThread.write(bytes);
+            }
+        });
+        btnRestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = getIntent();
                 finish();
+                startActivity(intent);
             }
         });
 
     }
+
+
+
     public void addListenerOnButton() {
         for (int i = 1; i < 10; i++) {
             buttons[i].setOnClickListener(new myclickeListener(buttons[i], i));
@@ -97,10 +129,19 @@ public class GameArea_Activity extends ActionBarActivity {
     public void playHardGame(){
         game = new SinglePlayerHardGame("player1");
     }
-    public void playMultiplayerGame(){
-        game = new MultiplayerGame("player1","player2");
+    public void playTwoPlayerGame(){
+        game = new TwoPlayerGame("player1","player2");
 
     }
+    private void playMultiplayerGame() {
+
+        synchronized (this){
+            connectedThread.start();
+        }
+
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,5 +164,79 @@ public class GameArea_Activity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public class ConnectedThread extends Thread {
+
+        private static final int MESSAGE_READ = 0 ;
+        private final BluetoothSocket mmSocket;
+        private final InputStream mmInStream;
+        private final OutputStream mmOutStream;
+
+        Handler mHandler = new Handler(){
+            public void handleMessage(Message msg){
+                super.handleMessage(msg);
+                switch(msg.what){
+                    case MESSAGE_READ:
+                        Toast.makeText(getApplicationContext(), "CONNECT", Toast.LENGTH_LONG).show();
+                        System.out.println(msg.arg1);
+                        break;
+                }
+            }
+        };
+
+
+
+        public ConnectedThread(BluetoothSocket socket) {
+            mmSocket = socket;
+            InputStream tmpIn = null;
+            OutputStream tmpOut = null;
+
+            // Get the input and output streams, using temp objects because
+            // member streams are final
+            try {
+                tmpIn = socket.getInputStream();
+                tmpOut = socket.getOutputStream();
+            } catch (IOException e) { }
+
+            mmInStream = tmpIn;
+            mmOutStream = tmpOut;
+        }
+
+        public void run() {
+            byte[] buffer = new byte[1024];  // buffer store for the stream
+            int bytes; // bytes returned from read()
+
+            // Keep listening to the InputStream until an exception occurs
+            while (true) {
+                try {
+                    // Read from the InputStream
+                    bytes = mmInStream.read(buffer);
+                    System.out.println("read");
+                    // Send the obtained bytes to the UI activity
+
+                    mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer)
+                            .sendToTarget();
+                } catch (IOException e) {
+                    break;
+                }
+            }
+        }
+
+        /* Call this from the main activity to send data to the remote device */
+        public void write(byte[] bytes) {
+            try {
+                mmOutStream.write(bytes);
+                System.out.println("wrote");
+            } catch (IOException e) { }
+        }
+
+        /* Call this from the main activity to shutdown the connection */
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) { }
+        }
+    }
+
 }
 

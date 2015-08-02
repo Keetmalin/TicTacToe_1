@@ -56,7 +56,6 @@
         android:layout_height="wrap_content"
         android:text="PLAY"
         android:id="@+id/btnPlay"
-        android:layout_marginTop="30dp"
         android:background="@drawable/button_border"
         android:textSize="30dp"
         android:layout_below="@+id/linearLayout"
@@ -74,4 +73,16 @@
         android:textColor="@color/red"
         android:background="@drawable/helpbutton_border"
         />
+
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:background="@color/yellow"
+        android:layout_below="@+id/btnPlay"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="28dp"
+        android:hint="Enter Player Name"
+        android:textSize="30dp"/>
 </RelativeLayout>

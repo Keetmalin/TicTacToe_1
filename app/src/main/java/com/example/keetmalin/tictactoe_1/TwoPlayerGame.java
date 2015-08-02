@@ -3,9 +3,9 @@ package com.example.keetmalin.tictactoe_1;
 import android.widget.Button;
 
 
-public class MultiplayerGame extends Game {
+public class TwoPlayerGame extends Game {
 
-    public MultiplayerGame(String player1, String player2){
+    public TwoPlayerGame(String player1, String player2){
         super(player1,player2);
     }
     @Override

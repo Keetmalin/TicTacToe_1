@@ -34,6 +34,10 @@ import java.util.UUID;
 
 public class MultiplayerMode_Activity extends ActionBarActivity {
 
+    public static BluetoothSocket mmSocket;
+    public static BluetoothSocket socket = null;
+
+
     Button btnPlay ,btnBack;
     BluetoothAdapter mBluetoothAdapter;
 
@@ -67,8 +71,7 @@ public class MultiplayerMode_Activity extends ActionBarActivity {
         listView = (ListView) findViewById(R.id.listView);
 
 
-        AcceptThread at = new AcceptThread();
-        at.start();
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3){
@@ -150,6 +153,8 @@ public class MultiplayerMode_Activity extends ActionBarActivity {
             }
             if (mBluetoothAdapter.isEnabled()){
                 devicesArray = mBluetoothAdapter.getBondedDevices();
+                AcceptThread at = new AcceptThread();
+                at.start();
                 getPairedDevices();
             }
 
@@ -180,7 +185,7 @@ public class MultiplayerMode_Activity extends ActionBarActivity {
 
     private class ConnectThread extends Thread {
 
-        private final BluetoothSocket mmSocket;
+
         private final BluetoothDevice mmDevice;
 
         public ConnectThread(BluetoothDevice device) {
@@ -220,7 +225,7 @@ public class MultiplayerMode_Activity extends ActionBarActivity {
 
         private void manageConnectedSocket(BluetoothSocket mmSocket) {
             Intent gameIntent = new Intent(MultiplayerMode_Activity.this, GameArea_Activity.class);
-            gameIntent.putExtra("SELECTION" , mmSocket);
+            gameIntent.putExtra("SELECTION" , 5);
             startActivity(gameIntent);
 
         }
@@ -246,7 +251,7 @@ public class MultiplayerMode_Activity extends ActionBarActivity {
         }
 
         public void run() {
-            BluetoothSocket socket = null;
+            //BluetoothSocket socket = null;
             // Keep listening until exception occurs or a socket is returned
             while (true) {
                 try {
@@ -267,7 +272,9 @@ public class MultiplayerMode_Activity extends ActionBarActivity {
         }
 
         private void manageConnectedSocket(BluetoothSocket socket) {
+            mmSocket=socket;
             Intent gameIntent = new Intent(MultiplayerMode_Activity.this, GameArea_Activity.class);
+            gameIntent.putExtra("SELECTION" , 5);
             startActivity(gameIntent);
         }
 
