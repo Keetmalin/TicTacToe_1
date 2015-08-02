@@ -2,6 +2,7 @@ package com.example.keetmalin.tictactoe_1;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -31,12 +32,12 @@ import java.util.Set;
 import java.util.UUID;
 
 
-public class MultiplayerMode_Activity extends ActionBarActivity implements AdapterView.OnItemClickListener {
+public class MultiplayerMode_Activity extends ActionBarActivity {
 
     Button btnPlay ,btnBack;
-    //RadioButton rBtnBluetooth;
     BluetoothAdapter mBluetoothAdapter;
 
+    ArrayList<BluetoothDevice> devices;
     Set<BluetoothDevice> devicesArray;
     ArrayList<String> bluetoothDevices;
     ArrayAdapter<String> listAdapter;
@@ -52,37 +53,43 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multiplayer_mode_);
 
-        //rBtnBluetooth = (RadioButton) findViewById(R.id.rBtnBluetooth);
-
         btnBack = (Button) findViewById(R.id.btnBack);
         btnPlay = (Button) findViewById(R.id.btnPlay);
 
         Typeface font = Typeface.createFromAsset(getAssets(), "BAUHS93.TTF");
 
         btnPlay.setTypeface(font);
-        //rBtnBluetooth.setTypeface(font);
         btnBack.setTypeface(font);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        devices = new ArrayList<BluetoothDevice>();
         bluetoothDevices= new ArrayList<String>();
         listView = (ListView) findViewById(R.id.listView);
-        //listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-        //listView.setTextFilterEnabled(true);
-        //listView.
 
-        //getPairedDevices();
+
+        AcceptThread at = new AcceptThread();
+        at.start();
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3){
+                if (mBluetoothAdapter.isDiscovering()){
+                    mBluetoothAdapter.cancelDiscovery();
+                }
+                Object [] o=devicesArray.toArray();
+                BluetoothDevice selected = devices.get(arg2);
+                ConnectThread ct = new ConnectThread(selected);
+                //at.stop();
+                ct.start();
+            }
+            }
+        );
+
         activateBluetooth();
-        //bluetoothDevices.add("keet");
         listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bluetoothDevices);
         listView.setAdapter(listAdapter);
 
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(mReceiver, filter);
-
-       //init();
-
-        //activateBluetooth();
-
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,8 +115,8 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
 
         if (devicesArray != null && devicesArray.size() != 0 ){
             for (BluetoothDevice device:devicesArray){
-                bluetoothDevices.add(device.getName());
-                //listAdapter.notifyDataSetChanged();
+                devices.add(device);
+                bluetoothDevices.add(device.getName() + "  (paired)  ");
             }
         }
     }
@@ -124,11 +131,11 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // Add the name and address to an array adapter to show in a ListView
                 if (!bluetoothDevices.contains(device.getName())){
+                    devices.add(device);
                     bluetoothDevices.add(device.getName());
                     listView.setAdapter(listAdapter);
                 }
 
-                //listAdapter.notifyDataSetChanged();
             }
         }
     };
@@ -148,10 +155,6 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
 
             startDiscovery();
 
-
-            /*if (mBluetoothAdapter.isEnabled()) {
-                startActivity(new Intent(MultiplayerMode_Activity.this , ConnectToADevice_Activity.class));
-            }*/
         }
     }
 
@@ -171,127 +174,10 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
             Toast.makeText(getApplicationContext(), "Couldn't connect bluetooth in device",Toast.LENGTH_LONG).show();
         } else if (resultCode==RESULT_OK){
             activateBluetooth();
-            /*getPairedDevices();
-            startDiscovery();
-            Intent temp = getIntent();
-            Context temp2 = getBaseContext();
-            mReceiver.onReceive(temp2,temp );*/
-            /*Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
-            List<String> s = new ArrayList<String>();
-            for(BluetoothDevice bt : pairedDevices)
-                s.add(bt.getName());
 
-            ArrayAdapter<String> mArrayAdapter =new  ArrayAdapter<String>(this, R.layout.activity_multiplayer_mode_, s);
-            // If there are paired devices
-            if (pairedDevices.size() > 0) {
-                // Loop through paired devices
-                for (BluetoothDevice device : pairedDevices) {
-                    // Add the name and address to an array adapter to show in a ListView
-                    mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
-                }
-            }
-            Intent selectionIntent = new Intent(MultiplayerMode_Activity.this , ConnectToADevice_Activity.class);
-            selectionIntent.putExtra("SELECTION" , (java.io.Serializable) mArrayAdapter);
-            startActivity(selectionIntent);
-
-            //startActivity(new Intent(MultiplayerMode_Activity.this , ConnectToADevice_Activity.class));*/
         }
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_multiplayer_mode_, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }*/
-    private void init(){
-
-
-
-        //filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        /*receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-
-                if (BluetoothDevice.ACTION_FOUND.equals(action)){
-                    BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-                    String s    ="";
-                    for (int a=0;a<bluetoothDevices.size() ; a++){
-                        if (device.getName().equals(bluetoothDevices.get(a))){
-                            //append
-                            s = "   (Paired)  ";
-
-                            break;
-                        }
-                    }
-                    listAdapter.add(device.getName() +s + "\n" + device.getAddress());
-
-                }
-                else if(BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action)){
-
-                }
-                else if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
-
-
-                }
-                else if(BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)){
-                    if (mBluetoothAdapter.getState()== mBluetoothAdapter.STATE_OFF){
-                        bluetoothOn();
-                    }
-                }
-            }
-        };
-        registerReceiver(receiver,filter);
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        registerReceiver(receiver,filter);
-        filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        registerReceiver(receiver,filter);
-        filter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        registerReceiver(receiver,filter);
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(receiver);
-        registerReceiver(receiver,filter);*/
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        if (mBluetoothAdapter.isDiscovering()){
-            mBluetoothAdapter.cancelDiscovery();
-        }
-
-        if (listAdapter.getItem(position).contains("Paired")){
-            Object [] o=devicesArray.toArray();
-            BluetoothDevice selected = (BluetoothDevice) o[position];
-            ConnectThread connect=new ConnectThread(selected);
-        }
-        else{
-            Toast.makeText(getApplicationContext(), "device is not paired " , Toast.LENGTH_LONG).show();
-        }
-    }
     private class ConnectThread extends Thread {
 
         private final BluetoothSocket mmSocket;
@@ -329,15 +215,66 @@ public class MultiplayerMode_Activity extends ActionBarActivity implements Adapt
 
             // Do work to manage the connection (in a separate thread)
             manageConnectedSocket(mmSocket);
+
         }
 
         private void manageConnectedSocket(BluetoothSocket mmSocket) {
+            Intent gameIntent = new Intent(MultiplayerMode_Activity.this, GameArea_Activity.class);
+            gameIntent.putExtra("SELECTION" , mmSocket);
+            startActivity(gameIntent);
+
         }
 
-        /** Will cancel an in-progress connection, and close the socket */
         public void cancel() {
             try {
                 mmSocket.close();
+            } catch (IOException e) { }
+        }
+    }
+    private class AcceptThread extends Thread {
+        private final BluetoothServerSocket mmServerSocket;
+
+        public AcceptThread() {
+            // Use a temporary object that is later assigned to mmServerSocket,
+            // because mmServerSocket is final
+            BluetoothServerSocket tmp = null;
+            try {
+                // MY_UUID is the app's UUID string, also used by the client code
+                tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord("Tic Tac Toe", MY_UUID);
+            } catch (IOException e) { }
+            mmServerSocket = tmp;
+        }
+
+        public void run() {
+            BluetoothSocket socket = null;
+            // Keep listening until exception occurs or a socket is returned
+            while (true) {
+                try {
+                    socket = mmServerSocket.accept();
+                } catch (IOException e) {
+                    break;
+                }
+                // If a connection was accepted
+                if (socket != null) {
+                    // Do work to manage the connection (in a separate thread)
+                    manageConnectedSocket(socket);
+                    try {
+                        mmServerSocket.close();
+                    } catch (IOException e) { }
+                    break;
+                }
+            }
+        }
+
+        private void manageConnectedSocket(BluetoothSocket socket) {
+            Intent gameIntent = new Intent(MultiplayerMode_Activity.this, GameArea_Activity.class);
+            startActivity(gameIntent);
+        }
+
+        /** Will cancel the listening socket, and cause the thread to finish */
+        public void cancel() {
+            try {
+                mmServerSocket.close();
             } catch (IOException e) { }
         }
     }
