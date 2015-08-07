@@ -1,21 +1,28 @@
 package com.example.keetmalin.tictactoe_1;
 
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.Random;
 
 
 public class SinglePlayerMediumGame extends Game {
+    public static String playerOne = "";
+    public static String playerTwo = "";
 
     public SinglePlayerMediumGame(String player){
 
         super(player,"Computer");
+        playerOne = player;
+        playerTwo = "Computer";
+    }
+    public SinglePlayerMediumGame(){
+        super("player","Computer");
+        playerOne = "player";
+        playerTwo = "Computer";
     }
     @Override
-    public boolean play(Button imageButton,int number,Button buttons[]) throws InterruptedException {
+    public int play(Button imageButton, int number, Button buttons[]) throws InterruptedException {
         if (this.getPlayer()) {
             imageButton.setBackgroundResource(R.drawable.zero);
             imageButton.setEnabled(false);
@@ -25,15 +32,31 @@ public class SinglePlayerMediumGame extends Game {
             this.getPlayer2().add(new Integer(number));
             if (this.getPlayer2().wins()) {
                 System.out.println("Winner " + getPlayer2().getName());
-                return true;
+                return 2;
             }else if(gameDrawn()){
                 System.out.println("Game Drawn");
-                return true;
+                return 0;
             }
-            if(getPlayer1().getCount()+getPlayer2().getCount()<9){}{Random rand = new Random();
+            if(getPlayer1().getCount()+getPlayer2().getCount()<9){}{
+                Random rand = new Random();
                 int  n ;
                 boolean found = false;
                 for(int i = 1 ;i<10;i++){
+                    if (!this.getPlayer1().contains(i)&&!this.getPlayer2().contains(i) ) {
+                        Player tempPlayer = Player.getClone(getPlayer1());
+                        tempPlayer.add(i);
+                        if (tempPlayer.wins()) {
+                            this.getPlayer1().add(i);
+                            this.changePlayer();
+                            buttons[i].setBackgroundResource(R.drawable.cross);
+                            buttons[i].setEnabled(false);
+                            found = true;
+                            return 1;
+                        }
+
+                    }
+                }
+                /*for(int i = 1 ;i<10;i++){
                     if (!this.getPlayer1().contains(i)&&!this.getPlayer2().contains(i) ) {
                         Player tempPlayer = new Player("Temp Player");
                         LinkedList<Integer> tempList = this.getPlayer1().getList();
@@ -49,12 +72,12 @@ public class SinglePlayerMediumGame extends Game {
 
                             System.out.println("Winner " + getPlayer1().getName());
                             found = true;
-                            return true;
+                            return 1;
                             //break;
                         }
                         break;
                     }
-                }
+                }*/
                 while(!found) {
                     n = rand.nextInt(9) + 1;
                     if (!this.getPlayer1().contains(n)&&!this.getPlayer2().contains(n) ) {
@@ -64,10 +87,10 @@ public class SinglePlayerMediumGame extends Game {
                         buttons[n].setEnabled(false);
                         if (this.getPlayer1().wins()) {
                             System.out.println("Winner " + getPlayer1().getName());
-                            return true;
+                            return 1;
                         }else if(gameDrawn()){
                             System.out.println("Game Drawn");
-                            return true;
+                            return 0;
                         }
                         found = true;
                     }
@@ -85,15 +108,15 @@ public class SinglePlayerMediumGame extends Game {
             this.getPlayer1().add(new Integer(number));
             if (this.getPlayer1().wins()) {
                 System.out.println("Winner " + getPlayer1().getName());
-                return true;
+                return 1;
             }else if(gameDrawn()){
                 System.out.println("Game Drawn");
-                return true;
+                return 0;
             }
             if(getPlayer1().getCount()+getPlayer2().getCount()<9){}{Random rand = new Random();
                 int  n ;
                 boolean found = false;
-                for(int i = 1 ;i<10;i++){
+                /*for(int i = 1 ;i<10;i++){
                     if (!this.getPlayer1().contains(i)&&!this.getPlayer2().contains(i) ) {
                         Player tempPlayer = new Player("Temp Player");
                         LinkedList<Integer> tempList = this.getPlayer2().getList();
@@ -108,10 +131,25 @@ public class SinglePlayerMediumGame extends Game {
                             buttons[i].setEnabled(false);
                             System.out.println("Winner " + getPlayer2().getName());
                             found = true;
-                            return true;
+                            return 2;
                             //break;
                         }
                         break;
+                    }
+                }*/
+                for(int i = 1 ;i<10;i++){
+                    if (!this.getPlayer1().contains(i)&&!this.getPlayer2().contains(i) ) {
+                        Player tempPlayer = Player.getClone(getPlayer2());
+                        tempPlayer.add(i);
+                        if (tempPlayer.wins()) {
+                            this.getPlayer2().add(i);
+                            this.changePlayer();
+                            buttons[i].setBackgroundResource(R.drawable.zero);
+                            buttons[i].setEnabled(false);
+                            found = true;
+                            return 2;
+                        }
+
                     }
                 }
                 while(!found) {
@@ -123,15 +161,15 @@ public class SinglePlayerMediumGame extends Game {
                         buttons[n].setEnabled(false);
                         if (this.getPlayer2().wins()) {
                             System.out.println("Winner " + getPlayer2().getName());
-                            return true;
+                            return 2;
                         }else if(gameDrawn()){
                             System.out.println("Game Drawn");
-                            return true;
+                            return 0;
                         }
                         found = true;
                     }
                 }}
         }
-        return false;
+        return 3;
     }
 }

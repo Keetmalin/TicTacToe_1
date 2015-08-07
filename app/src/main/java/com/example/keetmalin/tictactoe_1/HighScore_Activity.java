@@ -1,45 +1,32 @@
 package com.example.keetmalin.tictactoe_1;
 
-import android.content.Intent;
-import android.graphics.Typeface;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
+import android.widget.TextView;
 
 
-public class ConnectToADevice_Activity extends ActionBarActivity {
-    Button btnPlay ,btnBack;
+public class HighScore_Activity extends ActionBarActivity {
+    TextView textView;
+    DatabaseHandler dbHandler ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_connect_to_adevice_);
-        btnBack = (Button) findViewById(R.id.btnBack);
-        btnPlay = (Button) findViewById(R.id.btnPlay);
+        setContentView(R.layout.activity_high_score_);
 
-        Typeface font = Typeface.createFromAsset(getAssets(), "BAUHS93.TTF");
+        textView = (TextView) findViewById(R.id.textView);
+        dbHandler = new DatabaseHandler(this,null,null,1);
 
-        btnPlay.setTypeface(font);
-        btnBack.setTypeface(font);
-
-        Intent temp = getIntent();
-        int rBtnSelected = temp.getIntExtra("SELECTION" , 1);
-
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        textView.setText(dbHandler.DatabaseToString());
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_connect_to_adevice_, menu);
+        getMenuInflater().inflate(R.menu.menu_high_score_, menu);
         return true;
     }
 

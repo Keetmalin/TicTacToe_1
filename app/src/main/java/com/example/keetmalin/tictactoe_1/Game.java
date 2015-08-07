@@ -7,10 +7,14 @@ import android.widget.ImageButton;
  * Created by Pasindu Tennage on 7/17/2015.
  */
 public abstract class Game {
+    //public static String playerOne = "";
+    //public static String playerTwo = "";
     private Player player1;
     private Player player2;
     private boolean player; // true : player2 false : player 1
     public Game(String player1, String player2){
+        //playerOne = player1;
+        //playerTwo=player2;
         this.player1 = new Player(player1);
         this.player2 = new Player(player2);
         player = false;
@@ -32,5 +36,5 @@ public abstract class Game {
 
     public Player getPlayer1(){return player1;};
     public Player getPlayer2(){return player2;};
-    public abstract boolean play(Button button,int number,Button buttons[]) throws InterruptedException;
+    public abstract int play(Button button, int number, Button buttons[]) throws InterruptedException;
 }

@@ -1,19 +1,28 @@
 package com.example.keetmalin.tictactoe_1;
 
 import android.widget.Button;
-import android.widget.ImageButton;
 
 import java.util.Random;
 
 
 public class SinglePlayerEasyGame extends Game  {
-    public SinglePlayerEasyGame(String player){
+    //public static String playerOne = "";
+    //public static String playerTwo = "";
 
+    public SinglePlayerEasyGame(String player){
+        //playerOne = player;
         super(player,"Computer");
+        //playerOne = player;
+        //playerTwo = "Computer";
+    }
+    public SinglePlayerEasyGame(){
+        super("player","Computer");
+        //playerOne = "player";
+        //playerTwo = "Computer";
     }
 
 
-    public boolean play(Button button,int number,Button buttons[]) throws InterruptedException {
+    public int play(Button button, int number, Button buttons[]) throws InterruptedException {
         if (this.getPlayer()) {
             button.setBackgroundResource(R.drawable.zero);
             button.setEnabled(false);
@@ -23,10 +32,10 @@ public class SinglePlayerEasyGame extends Game  {
             this.getPlayer2().add(new Integer(number));
             if (this.getPlayer2().wins()) {
                 System.out.println("Winner " + getPlayer2().getName());
-                return true;
+                return 2;
             }else if(gameDrawn()){
                 System.out.println("Game Drawn");
-                return true;
+                return 0;
             }
             if(getPlayer1().getCount()+getPlayer2().getCount()<9){
                     Random rand = new Random();
@@ -40,10 +49,10 @@ public class SinglePlayerEasyGame extends Game  {
                             buttons[n].setEnabled(false);
                             if (this.getPlayer1().wins()) {
                                 System.out.println("Winner " + getPlayer1().getName());
-                                return true;
+                                return 1;
                             }else if(gameDrawn()){
                                 System.out.println("Game Drawn");
-                                return true;
+                                return 0;
                             }
                             break;
                         }
@@ -58,10 +67,10 @@ public class SinglePlayerEasyGame extends Game  {
             this.getPlayer1().add(new Integer(number));
             if (this.getPlayer1().wins()) {
                 System.out.println("Winner " + getPlayer1().getName());
-                return true;
+                return 1;
             }else if(gameDrawn()){
                 System.out.println("Game Drawn");
-                return true;
+                return 0;
             }
                 if(getPlayer1().getCount()+getPlayer2().getCount()<9){
                     Random rand = new Random();
@@ -75,16 +84,16 @@ public class SinglePlayerEasyGame extends Game  {
                             buttons[n].setEnabled(false);
                             if (this.getPlayer2().wins()) {
                                 System.out.println("Winner " + getPlayer2().getName());
-                                return true;
+                                return 2;
                             }else if(gameDrawn()){
                                 System.out.println("Game Drawn");
-                                return true;
+                                return 0;
                             }
                             break;
                        }
                     }
                 }
         }
-        return false;
+        return 3;
     }
 }

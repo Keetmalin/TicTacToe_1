@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -19,6 +20,7 @@ public class Difficulty_Activity extends ActionBarActivity {
     RadioButton rBtnEasy , rBtnMedium , rBtnHard;
     RadioGroup rGroup;
     int rBtnId;
+    EditText editText;
 
 
     @Override
@@ -32,6 +34,7 @@ public class Difficulty_Activity extends ActionBarActivity {
         rBtnMedium = (RadioButton) findViewById(R.id.rBtnMedium);
         rBtnHard = (RadioButton) findViewById(R.id.rBtnHard);
         rGroup = (RadioGroup) findViewById(R.id.rGroup);
+        editText = (EditText) findViewById(R.id.editText);
 
         Typeface font = Typeface.createFromAsset(getAssets(), "BAUHS93.TTF");
 
@@ -58,6 +61,8 @@ public class Difficulty_Activity extends ActionBarActivity {
                         break;
                 }
                 Intent gameIntent = new Intent(Difficulty_Activity.this, GameArea_Activity.class);
+                String playerName = editText.getText().toString();
+                gameIntent.putExtra("PLAYER_ONE_NAME",playerName);
                 gameIntent.putExtra("SELECTION" , rBtnId);
                 startActivity(gameIntent);
             }

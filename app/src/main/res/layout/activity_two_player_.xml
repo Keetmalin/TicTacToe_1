@@ -47,17 +47,16 @@
         android:background="@color/yellow"
         android:hint="Enter Player 1 Name"
         android:textSize="30dp"
+        android:id="@+id/editText1"
         android:layout_below="@+id/linearLayout2"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="39dp"
-        android:id="@+id/editTextPlayer1" />
+        android:layout_alignParentEnd="true" />
 
     <EditText
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/yellow"
-        android:hint="Enter Player Name"
+        android:hint="Enter Player 2 Name"
         android:textSize="30dp"
         android:id="@+id/editText2"
         android:layout_above="@+id/btnBack"

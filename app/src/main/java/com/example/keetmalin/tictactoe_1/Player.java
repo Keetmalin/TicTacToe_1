@@ -1,5 +1,7 @@
 package com.example.keetmalin.tictactoe_1;
 
+import android.util.Log;
+
 import java.util.LinkedList;
 
 /**
@@ -12,7 +14,7 @@ public class Player {
         indexes = new LinkedList<Integer>();
         this.name=name;
     }
-    public Player getClone(Player player){
+    public static Player getClone(Player player){
         Player clonePlayer = new Player(player.getName());
         LinkedList<Integer> list = player.getList();
         for(int i : list){
@@ -20,11 +22,11 @@ public class Player {
         }
         return clonePlayer;
     }
-    public boolean remove(int n){
+    public void remove(int n){
         if(indexes.contains(n)){
-            indexes.remove(n);return true;
+            indexes.remove(n);
         }
-        return false;
+
     }
     public boolean contains(int i){
 
@@ -35,14 +37,13 @@ public class Player {
         return this.indexes;
     }
     public int getCount(){
-
         return this.indexes.size();
     }
     public void add(int i){
         this.indexes.add(i);
     }
     public boolean wins(){
-        if((this.indexes.contains(1) && this.indexes.contains(2)&& this.indexes.contains(3) )||
+        if(     (this.indexes.contains(1) && this.indexes.contains(2)&& this.indexes.contains(3) )||
                 (this.indexes.contains(4) && this.indexes.contains(5)&& this.indexes.contains(6))||
                 (this.indexes.contains(7) && this.indexes.contains(8)&& this.indexes.contains(9))||
                 (this.indexes.contains(1) && this.indexes.contains(4)&& this.indexes.contains(7))||
@@ -50,7 +51,8 @@ public class Player {
                 (this.indexes.contains(9) && this.indexes.contains(6)&& this.indexes.contains(3))||
                 (this.indexes.contains(1) && this.indexes.contains(5)&& this.indexes.contains(9))||
                 (this.indexes.contains(7) && this.indexes.contains(5)&& this.indexes.contains(3))){
-            System.out.println(this.getName()+" wins");
+            Log.d("Tag", this.getName() + " wins");
+
             return true;
         }
         return false;
@@ -58,8 +60,4 @@ public class Player {
     public String getName(){
         return this.name;
     }
-
-
-
-
 }

@@ -16,4 +16,5 @@
     <string name="title_activity_medium_game_area_">MediumGameArea_Activity</string>
     <string name="title_activity_hard_game_area_">HardGameArea_Activity</string>
     <string name="title_activity_connect_to_adevice_">ConnectToADevice_Activity</string>
+    <string name="title_activity_high_score_">HighScore_Activity</string>
 </resources>

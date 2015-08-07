@@ -2,23 +2,26 @@ package com.example.keetmalin.tictactoe_1;
 
 import android.widget.Button;
 
-
-public class TwoPlayerGame extends Game {
+/**
+ * Created by KeetMalin on 8/2/2015.
+ */
+public class MultiplayerGame extends Game{
     public static String playerOne = "";
     public static String playerTwo = "";
 
-    public TwoPlayerGame(String player1, String player2){
+    public MultiplayerGame(String player1, String player2){
         super(player1,player2);
         playerOne = player1;
         playerTwo = player2;
     }
-    public TwoPlayerGame(){
+    public MultiplayerGame(){
         super("player1","player2");
         playerOne = "player 1";
         playerTwo = "player 2";
     }
     @Override
     public int play(Button button, int number, Button buttons[]) throws InterruptedException {
+
         if (this.getPlayer()) {
             button.setBackgroundResource(R.drawable.zero);
             button.setEnabled(false);

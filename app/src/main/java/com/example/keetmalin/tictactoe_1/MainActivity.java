@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
 
-    Button btnOnePlayer,btnTwoPlayer,btnOptions, btnHelp;
+    Button btnOnePlayer,btnTwoPlayer,btnOptions, btnHelp , btnHighScore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +25,13 @@ public class MainActivity extends ActionBarActivity {
         btnTwoPlayer = (Button) findViewById(R.id.btnTwoPlayer);
         btnOptions = (Button) findViewById(R.id.btnOptions);
         btnHelp = (Button) findViewById(R.id.btnHelp);
+        btnHighScore = (Button) findViewById(R.id.btnHighScore);
         Typeface font = Typeface.createFromAsset(getAssets(), "BAUHS93.TTF");
         btnOnePlayer.setTypeface(font);
         btnTwoPlayer.setTypeface(font);
         btnOptions.setTypeface(font);
         btnHelp.setTypeface(font);
+        btnHighScore.setTypeface(font);
 
         btnOnePlayer.setOnClickListener(new View.OnClickListener(){
 
@@ -58,6 +60,14 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this,Help_Activity.class));
+            }
+        });
+        btnHighScore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gameIntent = new Intent(MainActivity.this, HighScore_Activity.class);
+
+                startActivity(gameIntent);
             }
         });
 
